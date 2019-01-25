@@ -1,4 +1,4 @@
-- 节点分配: 1023节点为测试节点勿在生产环境中使用
+- 节点分配: **[1023]** 节点为测试节点勿在生产环境中使用
 - JAVA客户端代码, jodd的http模块
 ```
 package com.appgather.store.ags.common.utils;
