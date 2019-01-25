@@ -1,0 +1,10 @@
+.gradle/
+.idea/
+out/
+*.iml
+gradle/
+build/
+_logs/
+*.jar
+publish
+_tmp/

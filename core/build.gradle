@@ -1,0 +1,5 @@
+dependencies {
+    compile project(':api')
+    compile 'org.slf4j:slf4j-api:1.7.25'
+    testCompile 'org.jodd:jodd-core:5.0.6'
+}

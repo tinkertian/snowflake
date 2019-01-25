@@ -1,0 +1,99 @@
+buildscript {
+    ext.kotlin_version = '1.2.71'
+
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+allprojects {
+    apply plugin: 'java'
+
+    group 'com.tinkertian'
+    version '1.0.0-SNAPSHOT'
+
+    repositories {
+        mavenCentral()
+    }
+
+    tasks.withType(JavaCompile) {
+        options.encoding = 'UTF-8'
+    }
+}
+
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'idea'
+    apply plugin: 'kotlin'
+    apply plugin: 'maven'
+    apply plugin: 'maven-publish'
+
+    sourceCompatibility = 1.8
+    jar {
+        baseName = "tinkertian-snowflake-${project.name}"
+    }
+
+    dependencies {
+        compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+
+        testCompile group: 'junit', name: 'junit', version: '4.12'
+    }
+
+    idea {
+        module {
+            outputDir = file("build/idea/main")
+            testOutputDir = file('build/idea/test')
+        }
+    }
+
+    compileKotlin {
+        kotlinOptions {
+            jvmTarget = "1.8"
+        }
+    }
+
+    compileTestKotlin {
+        kotlinOptions {
+            jvmTarget = "1.8"
+        }
+    }
+
+    publishing {
+        publications {
+            maven(MavenPublication) {
+                groupId project.group
+                artifactId "snowflake-${project.name}"
+                from components.java
+            }
+        }
+
+        repositories {
+            maven {
+                def snapshotsRepoUrl = "${tinkertian_snapshot_url}"
+                def releasesRepoUrl = "${tinkertian_release_url}"
+                url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+                credentials {
+                    username "${tinkertian_username}"
+                    password "${tinkertian_password}"
+                }
+            }
+        }
+    }
+}
+
+task cp {
+    if (!new File('../snowflake-server/server').exists()) {
+        copy {
+            from 'server'
+            into '../snowflake-server'
+        }
+    }
+    copy {
+        from "snowflake-server/build/libs/snowflake-server-${version}.jar"
+        into '../snowflake-server'
+    }
+}

@@ -1,0 +1,15 @@
+snowflake:
+  node:
+    large: 1023-1023
+    small: 1023-1023
+server:
+  port: 1010
+logging:
+  level:
+    com.tinkertian: debug
+  path: _logs
+  file:
+    max-size: 100MB
+spring:
+  profiles:
+    active: dev

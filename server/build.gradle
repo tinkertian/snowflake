@@ -1,0 +1,12 @@
+plugins {
+    id 'org.springframework.boot' version '2.1.1.RELEASE'
+}
+
+bootJar{
+    baseName = "tinkertian-snowflake-${project.name}"
+}
+
+dependencies {
+    compile project(':spring')
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '2.1.0.RELEASE'
+}
