@@ -1,5 +1,7 @@
 package com.tinkertian.snowflake.core
 
+import com.tinkertian.snowflake.api.domain.exception.SnowflakeException
+
 open class SmallSnowflake(private var node: Int) {
     private val nodeShl = 10
     private val sequenceShl = 12
@@ -25,7 +27,7 @@ open class SmallSnowflake(private var node: Int) {
             if (this.sequence < maxSequence) {
                 this.sequence++
             } else {
-                throw RuntimeException("Sequence exhausted at " + this.sequence)
+                throw SnowflakeException("Sequence exhausted at ${this.sequence}, timestamp=${currentTime}")
             }
         }
         referenceTime = currentTime

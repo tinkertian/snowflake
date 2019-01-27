@@ -3,11 +3,17 @@ package com.tinkertian.sfserver.def.controller
 import com.tinkertian.snowflake.api.domain.SnowflakeDomain
 import com.tinkertian.snowflake.spring.SnowflakeComponent
 import org.slf4j.LoggerFactory
+import org.springframework.http.HttpHeaders
+import org.springframework.http.MediaType
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import java.lang.Byte.BYTES
+import java.nio.ByteBuffer
 import java.time.format.DateTimeFormatter
+import javax.servlet.http.HttpServletResponse
 
 @RestController
 @RequestMapping("/sf")
@@ -22,6 +28,15 @@ open class SnowflakeController {
     @GetMapping("/next-small")
     fun nextSmall(): String {
         return SnowflakeComponent.nextSmall().toString()
+    }
+
+    @GetMapping("/next-small-bin/{count}")
+    fun nextSmallBin(@PathVariable("count") count: Int): ResponseEntity<ByteArray> {
+        var buffer: ByteBuffer = ByteBuffer.allocate(count * 8)
+        for (i in 1..count) {
+            buffer.putLong(SnowflakeComponent.nextSmall())
+        }
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_OCTET_STREAM).body(buffer.array())
     }
 
     @GetMapping("/next-small-batch/{count}")
