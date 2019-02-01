@@ -5,8 +5,8 @@ snowflake:
 
 server:
   compression:
-    enabled: true
-    mime-types: application/json,application/xml,text/html,text/xml,text/plain
+    enabled: false
+    mime-types: application/json,application/xml,text/html,text/xml,text/plain,application/octet-stream
   port: 1010
 logging:
   level:
