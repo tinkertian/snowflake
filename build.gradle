@@ -71,7 +71,7 @@ subprojects {
             }
         }
 
-        repositories {
+        /*repositories {
             maven {
                 def snapshotsRepoUrl = "${tinkertian_snapshot_url}"
                 def releasesRepoUrl = "${tinkertian_release_url}"
@@ -81,7 +81,7 @@ subprojects {
                     password "${tinkertian_password}"
                 }
             }
-        }
+        }*/
     }
 }
 
