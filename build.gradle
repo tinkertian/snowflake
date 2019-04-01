@@ -93,7 +93,7 @@ task cp {
         }
     }
     copy {
-        from "server/build/libs/snowflake-server-${version}.jar"
+        from "server/build/libs/tinkertian-snowflake-server-${version}.jar"
         into '../snowflake-server'
     }
 }
