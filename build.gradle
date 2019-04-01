@@ -88,7 +88,7 @@ subprojects {
 task cp {
     if (!new File('../snowflake-server/server').exists()) {
         copy {
-            from 'server'
+            from 'serve'
             into '../snowflake-server'
         }
     }
