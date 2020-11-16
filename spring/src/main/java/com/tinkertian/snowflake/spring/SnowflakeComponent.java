@@ -1,22 +1,21 @@
 package com.tinkertian.snowflake.spring;
 
+import com.tinkertian.snowflake.core.LargeSnowflake;
+import com.tinkertian.snowflake.core.SmallSnowflake;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
-import com.tinkertian.snowflake.core.LargeSnowflake;
-import com.tinkertian.snowflake.core.SmallSnowflake;
 
 import javax.annotation.PostConstruct;
 
 @Component
 public class SnowflakeComponent {
     private final static Logger           logger             = LoggerFactory.getLogger(SnowflakeComponent.class);
+    private final static String           splitStr           = "-";
     private final static Object           largeSnowflakeLock = new Object();
     private final static Object           smallSnowflakeLock = new Object();
-    private static       Environment      environment;
     private static       int              largeStart;
     private static       int              largeEnd;
     private static       int              largeCurrentIndex;
@@ -26,22 +25,34 @@ public class SnowflakeComponent {
     private static       SmallSnowflake[] smallSnowflakeArray;
     private static       LargeSnowflake[] largeSnowflakeArray;
 
-    @Autowired
-    ApplicationContext applicationContext;
+    private final ApplicationContext applicationContext;
+
+    public SnowflakeComponent(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
+    }
 
     @PostConstruct
     private void init() {
         if (applicationContext != null) {
-            this.environment = applicationContext.getEnvironment();
-            if (environment.containsProperty("snowflake.node.large") &&
-                    environment.containsProperty("snowflake.node.large")) {
-                this.largeStart = Integer.valueOf(environment.getProperty("snowflake.node.large").split("-")[0]);
-                this.largeEnd = Integer.valueOf(environment.getProperty("snowflake.node.large").split("-")[1]);
-                this.largeCurrentIndex = this.largeStart;
-                this.smallStart = Integer.valueOf(environment.getProperty("snowflake.node.small").split("-")[0]);
-                this.smallEnd = Integer.valueOf(environment.getProperty("snowflake.node.small").split("-")[1]);
-                this.smallCurrentIndex = this.smallStart;
-                logger.info("Snowflake node large: {}-{}, small {}-{}", this.largeStart, this.largeEnd, this.smallStart, this.smallEnd);
+            Environment environment   = applicationContext.getEnvironment();
+            boolean     containsLarge = environment.containsProperty("snowflake.node.large");
+            boolean     containsSmall = environment.containsProperty("snowflake.node.small");
+            if (containsLarge && containsSmall) {
+                String largeStr = environment.getProperty("snowflake.node.large");
+                String smallStr = environment.getProperty("snowflake.node.small");
+                if (largeStr == null || smallStr == null)
+                    throw new NullPointerException();
+                String largeStartStr = largeStr.split(splitStr)[0];
+                String largeEndStr   = largeStr.split(splitStr)[1];
+                String smallStartStr = smallStr.split(splitStr)[0];
+                String smallEndStr   = smallStr.split(splitStr)[0];
+                largeStart        = Integer.parseInt(largeStartStr);
+                largeEnd          = Integer.parseInt(largeEndStr);
+                smallStart        = Integer.parseInt(smallStartStr);
+                smallEnd          = Integer.parseInt(smallEndStr);
+                largeCurrentIndex = largeStart;
+                smallCurrentIndex = smallStart;
+                logger.info("Snowflake node large: {}-{}, small {}-{}", largeStart, largeEnd, smallStart, smallEnd);
             } else {
                 logger.error("Not found snowflake.node.small and snowflake.node.small for environment");
             }

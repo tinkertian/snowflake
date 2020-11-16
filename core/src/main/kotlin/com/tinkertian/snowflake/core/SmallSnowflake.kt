@@ -1,8 +1,10 @@
 package com.tinkertian.snowflake.core
 
 import com.tinkertian.snowflake.api.domain.exception.SnowflakeException
+import org.slf4j.LoggerFactory
 
 open class SmallSnowflake(private var node: Int) {
+    private var logger = LoggerFactory.getLogger(SmallSnowflake::class.java)
     private val nodeShl = 10
     private val sequenceShl = 12
     private val maxNode: Short = 1023
@@ -20,7 +22,7 @@ open class SmallSnowflake(private var node: Int) {
     operator fun next(): Long {
         val currentTime = this.getCurrentTimeMillis()
         if (currentTime < referenceTime) {
-            throw RuntimeException(String.format("Last referenceTime %s is after reference time %s", referenceTime, currentTime))
+            throw RuntimeException("Last referenceTime $referenceTime is after reference time $currentTime")
         } else if (currentTime > referenceTime) {
             this.sequence = 0
         } else {
@@ -32,9 +34,14 @@ open class SmallSnowflake(private var node: Int) {
         }
         referenceTime = currentTime
 
-        return currentTime.shl(nodeShl).shl(sequenceShl)
+        val startNano = System.nanoTime()
+        val snowflakeId = currentTime.shl(nodeShl).shl(sequenceShl)
                 .or(node.shl(sequenceShl).toLong())
                 .or(this.sequence.toLong())
+        val endNano = System.nanoTime()
+        logger.debug("It takes time to generate a single snowflake：{} nm", endNano - startNano)
+
+        return snowflakeId
     }
 
     open fun getCurrentTimeMillis(): Long {
