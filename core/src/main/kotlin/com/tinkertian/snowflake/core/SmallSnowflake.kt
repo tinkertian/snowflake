@@ -3,15 +3,16 @@ package com.tinkertian.snowflake.core
 import com.tinkertian.snowflake.api.domain.exception.SnowflakeException
 import org.slf4j.LoggerFactory
 
-open class SmallSnowflake(private var node: Int) {
+open class SmallSnowflake(node: Int) {
   private var logger = LoggerFactory.getLogger(SmallSnowflake::class.java)
   private val nodeShl = 10
   private val sequenceShl = 12
   private val nodeAndSequenceShl = nodeShl + sequenceShl
   private val maxNode: Short = 1023
   private val maxSequence: Short = 4095
-  private var sequence: Short = 0
+  private var sequence: Long = 0
   private var referenceTime: Long = 0
+  private val nodeLong = node.toLong()
 
   init {
     if (node < 0 || node > maxNode) {
@@ -37,8 +38,8 @@ open class SmallSnowflake(private var node: Int) {
 
     val startNano = System.nanoTime()
     val snowflakeId = currentTime.shl(nodeAndSequenceShl)
-        .or(node.shl(sequenceShl).toLong())
-        .or(this.sequence.toLong())
+        .or(nodeLong.shl(sequenceShl))
+        .or(this.sequence)
     val endNano = System.nanoTime()
     logger.debug("It takes time to generate a single snowflake：{} nm", endNano - startNano)
 
