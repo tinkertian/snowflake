@@ -6,5 +6,7 @@ gradle/
 build/
 _logs/
 *.jar
-publish
 _tmp/
+gradlew
+gradlew.bat
+bin/

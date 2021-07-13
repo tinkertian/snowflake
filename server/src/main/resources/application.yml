@@ -11,7 +11,7 @@ server:
 logging:
   level:
     com.tinkertian: debug
-  path: _logs
+  path: logs
   file:
     max-size: 100MB
 spring:

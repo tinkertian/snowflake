@@ -1,8 +1,8 @@
 buildscript {
-    ext.kotlin_version = '1.2.71'
+    ext.kotlin_version = '1.4.20'
 
     repositories {
-        mavenCentral()
+        maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
     }
 
     dependencies {
@@ -85,15 +85,20 @@ subprojects {
     }
 }
 
-task cp {
-    if (!new File('../snowflake-server/server').exists()) {
+gradle.buildFinished {
+    project.buildDir.deleteDir()
+    copy_to_bin
+}
+
+task copy_to_bin {
+    if (!new File('./bin/server').exists()) {
         copy {
-            from 'serve'
-            into '../snowflake-server'
+            from 'sf'
+            into './bin'
         }
     }
     copy {
-        from "server/build/libs/tinkertian-snowflake-server-${version}.jar"
-        into '../snowflake-server'
+        from "./server/build/libs/tinkertian-snowflake-server-${version}.jar"
+        into './bin'
     }
 }
