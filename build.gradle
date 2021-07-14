@@ -85,16 +85,6 @@ subprojects {
     }
 }
 
-// delete empty directory
-task ded(type: Delete) {
-    delete './gradle'
-}
-
-// chmod sf file
-task csf(type: Exec) {
-    commandLine 'chmod', 'u+x', './bin/sf.sh'
-}
-
 // copy file to bin
 task ctb {
     if (!new File('./bin/server').exists()) {
