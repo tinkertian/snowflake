@@ -85,15 +85,21 @@ subprojects {
     }
 }
 
-gradle.buildFinished {
-    project.buildDir.deleteDir()
-    copy_to_bin
+// delete empty directory
+task ded(type: Delete) {
+    delete './gradle'
 }
 
-task copy_to_bin {
+// chmod sf file
+task csf(type: Exec) {
+    commandLine 'chmod', 'u+x', './bin/sf.sh'
+}
+
+// copy file to bin
+task ctb {
     if (!new File('./bin/server').exists()) {
         copy {
-            from 'sf'
+            from 'sf.sh'
             into './bin'
         }
     }
@@ -101,4 +107,9 @@ task copy_to_bin {
         from "./server/build/libs/tinkertian-snowflake-server-${version}.jar"
         into './bin'
     }
+}
+
+gradle.buildFinished {
+    ctb
+    project.buildDir.deleteDir()
 }
