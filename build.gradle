@@ -84,22 +84,3 @@ subprojects {
         }*/
     }
 }
-
-// copy file to bin
-task ctb {
-    if (!new File('./bin/server').exists()) {
-        copy {
-            from 'sf.sh'
-            into './bin'
-        }
-    }
-    copy {
-        from "./server/build/libs/tinkertian-snowflake-server-${version}.jar"
-        into './bin'
-    }
-}
-
-gradle.buildFinished {
-    ctb
-    project.buildDir.deleteDir()
-}

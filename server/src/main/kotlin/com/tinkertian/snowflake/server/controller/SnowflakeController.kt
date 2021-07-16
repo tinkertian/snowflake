@@ -1,21 +1,34 @@
 package com.tinkertian.snowflake.server.controller
 
 import com.tinkertian.snowflake.api.domain.SnowflakeDomain
-import com.tinkertian.snowflake.spring.SnowflakeComponent
+import com.tinkertian.snowflake.spring.SnowflakeProvider
 import org.slf4j.LoggerFactory
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import java.nio.ByteBuffer
 import java.time.format.DateTimeFormatter
 
 @RestController
-@RequestMapping("/sf")
-open class SnowflakeController {
+open class SnowflakeController(private val provider: SnowflakeProvider) {
   private var logger = LoggerFactory.getLogger(SnowflakeController::class.java)
+
+  @GetMapping
+  fun welcome(): Array<String> {
+    return arrayOf(
+        "/next",
+        "/next-small",
+        "/next-small-batch/{count}",
+        "/next-small-bin/{count}",
+        "/next-small-info",
+        "/next-large",
+        "/next-large-batch/{count}",
+        "/next-large-bin/{count}",
+        "/next-large-info",
+    )
+  }
 
   @GetMapping("/next")
   fun next(): String {
@@ -24,38 +37,41 @@ open class SnowflakeController {
 
   @GetMapping("/next-small")
   fun nextSmall(): String {
-    return SnowflakeComponent.nextSmall().toString()
+    return provider.nextSmall().toString()
   }
 
   @GetMapping("/next-small-bin/{count}")
   fun nextSmallBin(@PathVariable("count") count: Int): ResponseEntity<ByteArray> {
     val buffer: ByteBuffer = ByteBuffer.allocate(count * 8)
+    val startNano = System.nanoTime()
     for (i in 1..count) {
-      buffer.putLong(SnowflakeComponent.nextSmall())
+      buffer.putLong(provider.nextSmall())
     }
+    val endNano = System.nanoTime()
+    logger.info("Time to batch generate snowflake ：{} nm, {} ms", endNano - startNano, (endNano - startNano) / 1000 / 1000)
     return ResponseEntity.ok().contentType(MediaType.APPLICATION_OCTET_STREAM).body(buffer.array())
   }
 
   @GetMapping("/next-small-batch/{count}")
   fun nextSmallBatch(@PathVariable("count") count: Int): Array<String> {
-    return Array(count) { SnowflakeComponent.nextSmall().toString() }
+    return Array(count) { provider.nextSmall().toString() }
   }
 
   @GetMapping("/next-large")
   fun nextLarge(): String {
-    return SnowflakeComponent.nextLarge().toString()
+    return provider.nextLarge().toString()
   }
 
   @GetMapping("/next-small-info")
   fun nextSmallInfo(): SnowflakeDomain {
-    val sf = SnowflakeDomain.resolverSmall(SnowflakeComponent.nextSmall())
+    val sf = SnowflakeDomain.resolverSmall(provider.nextSmall())
     this.log(sf)
     return sf
   }
 
   @GetMapping("/next-large-info")
   fun nextLargeInfo(): SnowflakeDomain {
-    val sf = SnowflakeDomain.resolverLarge(SnowflakeComponent.nextLarge())
+    val sf = SnowflakeDomain.resolverLarge(provider.nextLarge())
     this.log(sf)
     return sf
   }
@@ -64,7 +80,7 @@ open class SnowflakeController {
   fun nextLargeBin(@PathVariable("count") count: Int): ResponseEntity<ByteArray> {
     val buffer: ByteBuffer = ByteBuffer.allocate(count * 8)
     for (i in 1..count) {
-      buffer.putLong(SnowflakeComponent.nextLarge())
+      buffer.putLong(provider.nextLarge())
     }
     return ResponseEntity.ok().contentType(MediaType.APPLICATION_OCTET_STREAM).body(buffer.array())
   }

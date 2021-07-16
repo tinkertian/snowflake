@@ -1,8 +1,7 @@
 snowflake:
   node:
-    large: 1023-1023
-    small: 1023-1023
-
+    large: 1023,1023
+    small: 1020,1023
 server:
   compression:
     enabled: false

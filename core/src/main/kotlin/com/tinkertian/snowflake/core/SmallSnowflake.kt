@@ -20,8 +20,7 @@ open class SmallSnowflake(node: Int) {
     }
   }
 
-  @Synchronized
-  operator fun next(): Long {
+  open fun next(): Long {
     val currentTime = this.getCurrentTimeMillis()
     if (currentTime < referenceTime) {
       throw RuntimeException("Last referenceTime $referenceTime is after reference time $currentTime")
@@ -37,7 +36,8 @@ open class SmallSnowflake(node: Int) {
     referenceTime = currentTime
 
     val startNano = System.nanoTime()
-    val snowflakeId = currentTime.shl(nodeAndSequenceShl)
+    val snowflakeId = currentTime
+        .shl(nodeAndSequenceShl)
         .or(nodeLong.shl(sequenceShl))
         .or(this.sequence)
     val endNano = System.nanoTime()

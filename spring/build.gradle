@@ -4,4 +4,5 @@ dependencies {
     compile group: 'org.springframework', name: 'spring-beans', version: '5.0.6.RELEASE'
     compile group: 'org.springframework', name: 'spring-context', version: '5.0.6.RELEASE'
     compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.25'
+    compile group: 'org.jodd', name: 'jodd-http', version: '5.0.6'
 }
