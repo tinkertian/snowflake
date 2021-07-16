@@ -1,3 +1,13 @@
+- 快速启动
+```shell script
+# 环境依赖：Jdk-1.8，Gradle-6.2.2
+$ alias build='./build.sh'
+$ build
+$ cd ./bin
+$ ./sf.sh start
+$ ./sf.sh status 
+$ ./sf.sh stop
+```
 - 节点分配: **[1023]** 节点为测试节点勿在生产环境中使用
 - JAVA客户端代码, jodd的http模块
 ```
