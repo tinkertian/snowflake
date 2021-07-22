@@ -5,7 +5,6 @@ if [ -d './bin' ]; then
 fi
 gradle clean
 gradle build
-sleep 3
 mkdir ./bin
 cp ./server/build/libs/tinkertian-snowflake-server-${version}.jar ./bin/.
 cp ./scripts/sf.sh ./bin/.
