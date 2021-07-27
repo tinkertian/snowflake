@@ -11,8 +11,8 @@ pid_file=${server_name}-${port}.pid
 case "$1" in
   start)
     echo "Starting snowflake service."
-    nohup java -jar -Dfile.encoding=UTF-8 $jar_name --spring.profiles.active=${env} --server.port=${port} --snowflake.node.large=${node_range} --snowflake.node.small=${node_range} >/dev/null &
-    echo $! >$pid_file
+    nohup java -jar -Dfile.encoding=UTF-8 $jar_name --spring.profiles.active=${env} --server.port=${port} --snowflake.node.large=${node_range} --snowflake.node.small=${node_range} > /dev/null &
+    echo $! > $pid_file
     ;;
   stop)
     if [ ! -f $pid_file ]; then
