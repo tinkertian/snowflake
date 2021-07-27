@@ -3,7 +3,7 @@
 version=1.0.0-SNAPSHOT
 env=prod
 port=1010
-node_range=0,1023
+node_range=1023,1023
 server_name=tinkertian-snowflake-server
 jar_name=${server_name}-${version}.jar
 pid_file=${server_name}-${port}.pid
