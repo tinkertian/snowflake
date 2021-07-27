@@ -1,6 +1,7 @@
 #!/bin/sh
 
-version=1.0.0-SNAPSHOT
+. ../gradle.properties
+
 env=prod
 port=1010
 node_range=1023,1023

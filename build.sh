@@ -1,6 +1,6 @@
 #!/bin/bash
 
-version=1.0.0-SNAPSHOT
+. gradle.properties
 
 if [ -d './bin' ]; then
   rm -rf ./bin
